@@ -6,10 +6,12 @@ rejects = 0
 Np = 200
 #Nsteps = int(3e4)
 Nsteps = 30000
-T = 20000.0
+T = 0.1
+m = 1
 
 Energy = np.zeros(Nsteps)
 Radius = np.zeros(Nsteps)
+QEnergy = np.zeros(Nsteps)
 
 
 # Seed for random number generation
@@ -24,7 +26,7 @@ X = np.random.rand(Np,3) - 0.5
 def Class_Energy(X, Np, T):
     # Classical Energy
     r = np.sqrt(np.sum(X*X,axis = 1))
-    print(r.shape)
+    #print(r.shape)
     Eclass = -2*np.sum(sp.special.erf(np.sqrt(0.25*np.pi*np.pi*Np/T)*r)/(Np*r))
     return Eclass
 
@@ -33,7 +35,7 @@ def Class_Energy(X, Np, T):
 def Quant_Energy(X, Np, T):
     # Quantum Energy
     r2 = np.sum((X-np.roll(X,1,axis=0))**2,axis = 1)
-    Equant = Np*np.sum(r2)/(4.0*T*T)
+    Equant = (T**2)*m*Np/2*np.sum(r2)
     return Equant
 
 
@@ -75,8 +77,9 @@ def MCmove(X, Np, T):
 # Main program
 for i in range(Nsteps):
     # print('Step: ', i, ', 1.5*Np/T: ', 1.5*Np/T , ', Classical Energy: ', Class_Energy(X, Np, T), ', Quantum Energy: ', Quant_Energy(X, Np, T))
-    Energy[i] = Class_Energy(X, Np, T) + Quant_Energy(X, Np, T)
+    Energy[i] = Class_Energy(X, Np, T) + Quant_Energy(X, Np, T) + 1.5*Np*T
     Radius[i] = np.sqrt(np.sum(X*X)/Np)
+    QEnergy[i] = Quant_Energy(X, Np, T)
     X = MCmove(X, Np, T)
 
 # Plor results
@@ -88,12 +91,20 @@ plt.grid()
 plt.title('Energy vs MC steps')
 plt.show()
 
-plt.plot(Radius)
-plt.xlabel('MC steps')
-plt.ylabel('Radius')
-plt.grid()
-plt.title('Radius vs MC steps')
-plt.show()
+# plt.plot(QEnergy)
+# plt.xlabel('MC steps')
+# plt.ylabel('Quantum Energy')
+# plt.grid()
+# plt.title('Quantum Energy vs MC steps')
+# plt.show()
+
+
+# plt.plot(Radius)
+# plt.xlabel('MC steps')
+# plt.ylabel('Radius')
+# plt.grid()
+# plt.title('Radius vs MC steps')
+# plt.show()
 
 # print("Initial Energy: ", Energy[0])
 # print("Final Energy: ", Energy[-1])
