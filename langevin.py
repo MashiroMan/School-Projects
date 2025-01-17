@@ -8,15 +8,16 @@ dt = .01
 avg_size = np.floor(10/dt).astype(int)
 gamma = .2
 m = 1
+miu = m/Np
 epsilon = .01
 
 
 
 X = np.random.rand(Np,3) - 0.5
-V = np.random.normal(0,np.sqrt(T/m),[Np,3])
+V = np.random.normal(0,np.sqrt(T/miu),[Np,3])
 
 def Kinetic_Energy(V, m, Np):
-    return 0.5*np.sum(V*V)*m/Np
+    return 0.5*np.sum(V*V)*miu
 
 def acceleration(X, Np, m, T):
     r = np.sqrt(np.sum(X*X, axis=1))
